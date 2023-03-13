@@ -1,13 +1,11 @@
 const router = require("express").Router();
 const User = require("../models/user.model");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 //REGISTER
 router.post("/register", async (req, res) => {
   try {
-    //generate new password
-    // const salt = await bcrypt.genSalt(10);
-    // const hashedPassword = await bcrypt.hash(req.body.password, salt);
     saltRounds = 10;
     const salt = await bcrypt.genSalt(saltRounds);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
@@ -38,8 +36,17 @@ router.post("/login", async (req, res) => {
       user.password
     );
     !validPassword && res.status(400).json("wrong password");
+    const accessToken = jwt.sign(
+      {
+        id: user._id,
+        isAdmin: user.isAdmin,
+      },
+      process.env.SECRET_KEY,
+      { expiresIn: "5d" }
+    );
+    const { password, ...others } = user._doc;
 
-    res.status(200).json(user);
+    res.status(200).json({ ...others, accessToken });
   } catch (err) {
     console.log(err);
   }
