@@ -5,17 +5,21 @@ const {
   followUser,
   unfollowUser,
 } = require("../controllers/user.controllers");
+const {
+  verifyTokenAndAuthorization,
+  verifyTokenAndAdmin,
+} = require("../verifyToken");
 
 const router = require("express").Router();
 
 //update user
-router.put("/:id", updateUser);
+router.put("/:id", verifyTokenAndAuthorization, updateUser);
 //deleter user
-router.delete("/:id", deleteUser);
+router.delete("/:id", verifyTokenAndAuthorization, deleteUser);
 
 //get a user
 
-router.get("/", getUser);
+router.get("/", verifyTokenAndAdmin, getUser);
 //follow a user
 
 router.put("/:id/follow", followUser);

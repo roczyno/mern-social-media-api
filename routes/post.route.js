@@ -7,6 +7,7 @@ const {
   getTimelinePost,
   getAllUsersPost,
 } = require("../controllers/post.controllers");
+const { verifyTokenAndAuthorization } = require("../verifyToken");
 
 const router = require("express").Router();
 
@@ -15,10 +16,10 @@ const router = require("express").Router();
 router.post("/", createPost);
 //update a post
 
-router.put("/:id", updatePost);
+router.put("/:id", verifyTokenAndAuthorization, updatePost);
 //delete a post
 
-router.delete("/:id", deletePost);
+router.delete("/:id", verifyTokenAndAuthorization, deletePost);
 //like / dislike a post
 
 router.put("/:id/like", likeOrUnlikePost);
